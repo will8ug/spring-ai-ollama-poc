@@ -1,0 +1,13 @@
+@baseUrl=http://localhost:9101
+
+###
+GET {{baseUrl}}/ping
+
+###
+POST {{baseUrl}}/chat
+Content-Type: application/json
+
+{
+  "message": "This is a test message. Please simply let me know if you are working."
+}
+
