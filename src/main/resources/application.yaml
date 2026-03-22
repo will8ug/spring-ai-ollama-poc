@@ -1,0 +1,13 @@
+server:
+  port: 9101
+
+spring:
+  ai:
+    ollama:
+      base-url: http://localhost:11434
+
+logging:
+  level:
+    root: INFO
+    io.will.springai2poc: DEBUG
+    org.springframework.ai.chat.client.advisor: DEBUG
