@@ -24,8 +24,9 @@ class PingControllerIT {
     @Test
     void pingReturnsPong() {
         webTestClient.get().uri("/ping")
-            .exchange()
-            .expectStatus().isOk()
-            .expectBody(String.class).isEqualTo("PONG");
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(String.class)
+                .isEqualTo("PONG");
     }
 }
