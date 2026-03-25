@@ -10,9 +10,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 import java.net.MalformedURLException;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/web-content")
@@ -34,5 +37,17 @@ public class WebContentController {
         
         WebContentResponse response = new WebContentResponse(request.url(), contents);
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/process-and-store")
+    public Mono<Map<String, Object>> processAndStoreWebContent(@RequestBody WebContentRequest request) {
+        return Mono.fromCallable(() -> webContentService
+                        .processAndStoreWebContent(request.url()))
+                .subscribeOn(Schedulers.boundedElastic())
+                .map(documentCount -> Map.of(
+                        "url", request.url(),
+                        "documentCount", documentCount,
+                        "status", "success"
+                ));
     }
 }

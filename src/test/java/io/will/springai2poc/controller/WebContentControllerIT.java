@@ -42,7 +42,6 @@ class WebContentControllerIT {
                     assertThat(response.url()).isEqualTo(testUrl);
                     assertThat(response.contents()).isNotNull();
                     assertThat(response.contents()).isNotEmpty();
-                    // 验证返回的内容包含预期的关键词
                     String combinedContent = String.join(" ", response.contents());
                     assertThat(combinedContent)
                             .containsIgnoringCase("agent")
@@ -51,15 +50,19 @@ class WebContentControllerIT {
     }
 
     @Test
-    void loadWebContentWithInvalidUrlReturnsBadRequest() {
-        String invalidUrl = "not-a-valid-url";
-        WebContentRequest request = new WebContentRequest(invalidUrl);
+    void processAndStoreWebContentReturnsSuccess() {
+        String testUrl = "https://lilianweng.github.io/posts/2023-06-23-agent/";
+        WebContentRequest request = new WebContentRequest(testUrl);
 
         webTestClient.post()
-                .uri("/web-content/load")
+                .uri("/web-content/process-and-store")
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(request)
                 .exchange()
-                .expectStatus().is5xxServerError();
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$.url").isEqualTo(testUrl)
+                .jsonPath("$.status").isEqualTo("success")
+                .jsonPath("$.documentCount").isNumber();
     }
 }
