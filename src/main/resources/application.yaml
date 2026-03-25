@@ -8,6 +8,17 @@ spring:
       chat:
         options:
           model: gemma3:270m
+      embedding:
+        model: nomic-embed-text:v1.5
+    vectorstore:
+      milvus:
+        client:
+          host: localhost
+          port: 19530
+        initialize-schema: true
+        database-name: "default"
+        collection-name: "spring_ai2_poc_ollama"
+        embedding-dimension: 768
 
 logging:
   level:
