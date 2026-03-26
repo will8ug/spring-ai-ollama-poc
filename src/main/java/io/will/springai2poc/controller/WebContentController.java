@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
@@ -30,16 +31,16 @@ public class WebContentController {
     @PostMapping(value = "/load", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<WebContentResponse> loadWebContent(@RequestBody WebContentRequest request) throws MalformedURLException {
         List<Document> documents = webContentService.loadWebContent(request.url());
-        
+
         List<String> contents = documents.stream()
                 .map(Document::getText)
                 .toList();
-        
+
         WebContentResponse response = new WebContentResponse(request.url(), contents);
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/process-and-store")
+    @PostMapping(value = "/process-and-store", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<Map<String, Object>> processAndStoreWebContent(@RequestBody WebContentRequest request) {
         return Mono.fromCallable(() -> webContentService
                         .processAndStoreWebContent(request.url()))
@@ -49,5 +50,10 @@ public class WebContentController {
                         "documentCount", documentCount,
                         "status", "success"
                 ));
+    }
+
+    @PostMapping(value = "/retrieve", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Flux<String> retrieve(@RequestBody WebContentRequest request) {
+        return webContentService.retrieveDocuments(request.question());
     }
 }

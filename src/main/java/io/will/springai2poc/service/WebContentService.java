@@ -6,6 +6,9 @@ import org.springframework.ai.reader.jsoup.config.JsoupDocumentReaderConfig;
 import org.springframework.ai.transformer.splitter.TokenTextSplitter;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -38,5 +41,12 @@ public class WebContentService {
         
         vectorStoreService.storeDocuments(splitDocuments);
         return splitDocuments.size();
+    }
+
+    public Flux<String> retrieveDocuments(String question) {
+        return Mono.fromCallable(() -> vectorStoreService.searchDocuments(question))
+                .subscribeOn(Schedulers.boundedElastic())
+                .flatMapMany(Flux::fromIterable)
+                .map(Document::getText);
     }
 }
