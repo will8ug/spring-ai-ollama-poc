@@ -8,6 +8,8 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
+import java.time.Duration;
+
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -21,6 +23,7 @@ class AiChatControllerIT {
     void beforeEach() {
         webTestClient = WebTestClient.bindToServer()
                 .baseUrl("http://localhost:" + port)
+                .responseTimeout(Duration.ofSeconds(30))
                 .build();
     }
 
