@@ -89,12 +89,13 @@ class WebContentControllerIT {
                 .bodyValue(retrieveRequest)
                 .exchange()
                 .expectStatus().isOk()
-                .expectBodyList(String.class)
-                .value(contents -> {
-                    assertThat(contents).isNotNull();
-                    assertThat(contents).isNotEmpty();
+                .expectBodyList(WebContentResponse.class)
+                .value(responses -> {
+                    assertThat(responses).isNotNull();
+                    assertThat(responses).isNotEmpty();
 
-                    boolean hasRelevantContent = contents.stream()
+                    boolean hasRelevantContent = responses.stream()
+                            .flatMap(response -> response.contents().stream())
                             .anyMatch(content -> content.toLowerCase().contains("agent"));
                     assertThat(hasRelevantContent).isTrue();
                 });

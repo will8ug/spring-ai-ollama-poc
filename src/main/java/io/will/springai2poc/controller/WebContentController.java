@@ -53,7 +53,8 @@ public class WebContentController {
     }
 
     @PostMapping(value = "/retrieve", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Flux<String> retrieve(@RequestBody WebContentRequest request) {
-        return webContentService.retrieveDocuments(request.question());
+    public Flux<WebContentResponse> retrieve(@RequestBody WebContentRequest request) {
+        return webContentService.retrieveDocuments(request.question())
+                .map(content -> new WebContentResponse(null, List.of(content)));
     }
 }

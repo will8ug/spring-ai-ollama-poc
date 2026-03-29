@@ -11,3 +11,11 @@ Content-Type: application/json
   "message": "This is a test message. Please simply let me know if you are working."
 }
 
+###
+POST {{baseUrl}}/web-content/retrieve
+Content-Type: application/json
+
+{
+  "question": "What is an agent?"
+}
+
