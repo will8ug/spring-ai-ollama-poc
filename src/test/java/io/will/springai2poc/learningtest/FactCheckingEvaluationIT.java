@@ -12,7 +12,7 @@ import org.springframework.ai.ollama.api.OllamaChatOptions;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
-public class EvaluationIT {
+public class FactCheckingEvaluationIT {
     public static final String BESPOKE_MINICHECK = "bespoke-minicheck:7b";
 
     @Test
