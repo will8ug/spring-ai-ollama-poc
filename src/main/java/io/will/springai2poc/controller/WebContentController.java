@@ -3,6 +3,8 @@ package io.will.springai2poc.controller;
 import io.will.springai2poc.controller.model.WebContentRequest;
 import io.will.springai2poc.controller.model.WebContentResponse;
 import io.will.springai2poc.service.WebContentService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.ai.document.Document;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +23,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/web-content")
 public class WebContentController {
+    private static final Logger logger = LoggerFactory.getLogger(WebContentController.class);
 
     private final WebContentService webContentService;
 
@@ -30,8 +33,9 @@ public class WebContentController {
 
     @PostMapping(value = "/load", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<WebContentResponse> loadWebContent(@RequestBody WebContentRequest request) throws MalformedURLException {
-        List<Document> documents = webContentService.loadWebContent(request.url());
+        logger.info("POST /load");
 
+        List<Document> documents = webContentService.loadWebContent(request.url());
         List<String> contents = documents.stream()
                 .map(Document::getText)
                 .toList();
@@ -42,6 +46,8 @@ public class WebContentController {
 
     @PostMapping(value = "/process-and-store", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<Map<String, Object>> processAndStoreWebContent(@RequestBody WebContentRequest request) {
+        logger.info("POST /process-and-store");
+
         return Mono.fromCallable(() -> webContentService
                         .processAndStoreWebContent(request.url()))
                 .subscribeOn(Schedulers.boundedElastic())
@@ -54,6 +60,8 @@ public class WebContentController {
 
     @PostMapping(value = "/retrieve", produces = MediaType.APPLICATION_JSON_VALUE)
     public Flux<WebContentResponse> retrieve(@RequestBody WebContentRequest request) {
+        logger.info("POST /retrieve");
+
         return webContentService.retrieveDocuments(request.question())
                 .map(content -> new WebContentResponse(null, List.of(content)));
     }

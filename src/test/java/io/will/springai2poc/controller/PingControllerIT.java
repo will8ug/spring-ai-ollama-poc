@@ -1,13 +1,15 @@
 package io.will.springai2poc.controller;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class PingControllerIT {
+@Tag("with-containers")
+public class PingControllerIT {
 
     @Value("${local.server.port}")
     private int port;

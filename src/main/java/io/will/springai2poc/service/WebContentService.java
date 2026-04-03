@@ -1,5 +1,7 @@
 package io.will.springai2poc.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.reader.jsoup.JsoupDocumentReader;
 import org.springframework.ai.reader.jsoup.config.JsoupDocumentReaderConfig;
@@ -16,6 +18,7 @@ import java.util.List;
 
 @Service
 public class WebContentService {
+    private static final Logger logger = LoggerFactory.getLogger(WebContentService.class);
 
     private final VectorStoreService vectorStoreService;
 
@@ -24,6 +27,8 @@ public class WebContentService {
     }
 
     public List<Document> loadWebContent(String url) throws MalformedURLException {
+        logger.info("Loading web content from {}", url);
+
         UrlResource resource = new UrlResource(URI.create(url));
         
         JsoupDocumentReaderConfig config = JsoupDocumentReaderConfig.builder()
@@ -32,13 +37,16 @@ public class WebContentService {
                 .build();
         
         JsoupDocumentReader reader = new JsoupDocumentReader(resource, config);
-        return reader.read();
+        List<Document> documents = reader.read();
+        logger.info("{} documents loaded", documents.size());
+        return documents;
     }
 
     public int processAndStoreWebContent(String url) throws MalformedURLException {
         List<Document> documents = loadWebContent(url);
+
         List<Document> splitDocuments = TokenTextSplitter.builder().build().split(documents);
-        
+        logger.info("{} documents splitted", splitDocuments.size());
         vectorStoreService.storeDocuments(splitDocuments);
         return splitDocuments.size();
     }

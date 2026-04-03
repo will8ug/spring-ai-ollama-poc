@@ -3,7 +3,11 @@ package io.will.springai2poc.controller;
 import io.will.springai2poc.controller.model.WebContentRequest;
 import io.will.springai2poc.controller.model.WebContentResponse;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
@@ -13,7 +17,9 @@ import static java.time.Duration.ofSeconds;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class WebContentControllerIT {
+@Tag("with-containers")
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+public class WebContentControllerIT {
 
     @Value("${local.server.port}")
     private int port;
@@ -29,6 +35,7 @@ class WebContentControllerIT {
     }
 
     @Test
+    @Order(1)
     void loadWebContentReturnsExpectedStructure() {
         String testUrl = "https://lilianweng.github.io/posts/2023-06-23-agent/";
         WebContentRequest request = WebContentRequest.withUrl(testUrl);
@@ -52,6 +59,7 @@ class WebContentControllerIT {
     }
 
     @Test
+    @Order(2)
     void processAndStoreWebContentReturnsSuccess() {
         String testUrl = "https://lilianweng.github.io/posts/2023-06-23-agent/";
         WebContentRequest request = WebContentRequest.withUrl(testUrl);
@@ -69,18 +77,9 @@ class WebContentControllerIT {
     }
 
     @Test
+    @Order(3)
     void retrieveDocumentsReturnsExpectedFlux() {
-        String testUrl = "https://lilianweng.github.io/posts/2023-06-23-agent/";
-        WebContentRequest storeRequest = WebContentRequest.withUrl(testUrl);
-        
-        webTestClient.post()
-                .uri("/web-content/process-and-store")
-                .contentType(MediaType.APPLICATION_JSON)
-                .bodyValue(storeRequest)
-                .exchange()
-                .expectStatus().isOk();
-
-        String testQuestion = "What is an agent?";
+        String testQuestion = "What are the types of memory?";
         WebContentRequest retrieveRequest = WebContentRequest.withQuestion(testQuestion);
 
         webTestClient.post()

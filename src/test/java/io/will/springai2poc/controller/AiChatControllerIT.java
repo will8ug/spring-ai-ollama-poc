@@ -2,6 +2,7 @@ package io.will.springai2poc.controller;
 
 import io.will.springai2poc.controller.model.ChatRequest;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
@@ -13,7 +14,8 @@ import java.time.Duration;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class AiChatControllerIT {
+@Tag("with-containers")
+public class AiChatControllerIT {
     @LocalServerPort
     private int port;
 
